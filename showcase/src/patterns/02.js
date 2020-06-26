@@ -18,6 +18,10 @@ const useClapAnimation = ({ clapEl, countEl, clapTotalEl }) => {
   );
 
   useEffect(() => {
+    if (!clapEl || !countEl || !clapTotalEl) {
+      return
+    }
+    
     const tlDuration = 300;
     const scaleBtn = new mojs.Html({
       el: clapEl,
@@ -95,7 +99,7 @@ const useClapAnimation = ({ clapEl, countEl, clapTotalEl }) => {
       circleBurst,
     ]);
     setAnimationTimeline(newAnimationTimeline);
-  }, []);
+  }, [clapEl, countEl, clapTotalEl]);
 
   return animationTimeline;
 };

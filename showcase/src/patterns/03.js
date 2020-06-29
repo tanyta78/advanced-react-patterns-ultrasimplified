@@ -1,10 +1,12 @@
 import React, {
   useState,
+  useEffect,
   useMemo,
   useCallback,
   useLayoutEffect,
   createContext,
-  useContext
+  useContext,
+  useRef,
 } from "react";
 import mojs from "mo-js";
 import styles from "./index.css";
@@ -114,7 +116,7 @@ const useClapAnimation = ({ clapEl, countEl, clapTotalEl }) => {
 const MediumClapContext = createContext();
 const { Provider } = MediumClapContext;
 
-const MediumClap = ({ children }) => {
+const MediumClap = ({ children, onClap }) => {
   const MAXIMUM_USER_CLAP = 50;
   const [clapState, setClapState] = useState(initialState);
   const { count } = clapState;
@@ -133,6 +135,15 @@ const MediumClap = ({ children }) => {
     countEl: clapCountRef,
     clapTotalEl: clapTotalRef,
   });
+
+  const componentJustMounted = useRef(true);
+
+  useEffect(() => {
+    if (!componentJustMounted.current) {
+      onClap && onClap(clapState);
+    }
+    componentJustMounted.current = false;
+  }, [count]);
 
   const handleClapClick = () => {
     animationTimeline.replay();
@@ -187,7 +198,7 @@ const ClapIcon = () => {
 
 const ClapCount = () => {
   const { count, setRef } = useContext(MediumClapContext);
-  
+
   return (
     <span ref={setRef} data-refkey="clapCountRef" className={styles.count}>
       + {count}
@@ -221,19 +232,26 @@ const CountTotal = () => {
 
 MediumClap.Icon = ClapIcon;
 MediumClap.Count = ClapCount;
-MediumClap.Total= CountTotal;
+MediumClap.Total = CountTotal;
 
 /**
  * Usage
  */
 // import MediumClap from 'medium-clap'
 const Usage = () => {
+  const [count, setCount] = useState(0);
+  const handleClap = (clapState) => {
+    setCount(clapState.count);
+  };
   return (
-    <MediumClap>
-      <MediumClap.Icon />
-      <MediumClap.Count />
-      <MediumClap.Total />
-    </MediumClap>
+    <div style={{ width: "100%" }}>
+      <MediumClap onClap={handleClap}>
+        <MediumClap.Icon />
+        <MediumClap.Count />
+        <MediumClap.Total />
+      </MediumClap>
+      <div className={styles.info}>{`You have clapped ${count}`}</div>
+    </div>
   );
 };
 

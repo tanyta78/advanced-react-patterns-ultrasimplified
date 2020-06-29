@@ -208,13 +208,31 @@ const CountTotal = () => {
 /**
  * Usage
  */
+// import MediumClap, {ClapIcon,ClapCount,CountTotal} from 'medium-clap'
+// const Usage = () => {
+//   return (
+//     <MediumClap>
+//       <ClapIcon />
+//       <ClapCount />
+//       <CountTotal />
+//     </MediumClap>
+//   );
+// };
 
+MediumClap.Icon = ClapIcon;
+MediumClap.Count = ClapCount;
+MediumClap.Total= CountTotal;
+
+/**
+ * Usage
+ */
+// import MediumClap from 'medium-clap'
 const Usage = () => {
   return (
     <MediumClap>
-      <ClapIcon />
-      <ClapCount />
-      <CountTotal />
+      <MediumClap.Icon />
+      <MediumClap.Count />
+      <MediumClap.Total />
     </MediumClap>
   );
 };

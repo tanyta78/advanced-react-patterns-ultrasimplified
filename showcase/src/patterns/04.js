@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import mojs from "mo-js";
 import styles from "./index.css";
+import userCustomStyles from "./usage.css";
 
 const initialState = {
   count: 0,
@@ -116,7 +117,12 @@ const useClapAnimation = ({ clapEl, countEl, clapTotalEl }) => {
 const MediumClapContext = createContext();
 const { Provider } = MediumClapContext;
 
-const MediumClap = ({ children, onClap, style: userStyles = {} }) => {
+const MediumClap = ({
+  children,
+  onClap,
+  style: userStyles = {},
+  className,
+}) => {
   const MAXIMUM_USER_CLAP = 50;
   const [clapState, setClapState] = useState(initialState);
   const { count } = clapState;
@@ -162,14 +168,16 @@ const MediumClap = ({ children, onClap, style: userStyles = {} }) => {
     setRef,
   ]);
 
+  const classNames = [styles.clap, className].join(" ").trim();
+
   return (
     <Provider value={memoizedValue}>
       <button
         ref={setRef}
         data-refkey="clapRef"
-        className={styles.clap}
         onClick={handleClapClick}
         style={userStyles}
+        className={classNames}
       >
         {children}
       </button>
@@ -181,14 +189,18 @@ const MediumClap = ({ children, onClap, style: userStyles = {} }) => {
  * subcomponents
  */
 
-const ClapIcon = ({ style: userStyles = {} }) => {
+const ClapIcon = ({ style: userStyles = {} }, className) => {
   const { isClicked } = useContext(MediumClapContext);
+  const classNames = [styles.icon, isClicked ? styles.checked : "", className]
+    .join(" ")
+    .trim();
+
   return (
     <span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 100.08 125"
-        className={`${styles.icon} ${isClicked && styles.checked}`}
+        className={classNames}
         style={userStyles}
       >
         <path d="M77.704 12.876a8.1 8.1 0 012.264 4.053c.367-.27.756-.503 1.158-.706.971-1.92.654-4.314-.964-5.891a5.056 5.056 0 00-7.151.091l-.216.222c1.844.174 3.568.927 4.909 2.231zM48.893 26.914c.407.885.687 1.93.791 3.057l16.478-16.928c.63-.648 1.364-1.144 2.145-1.545 1.006-1.93.712-4.367-.925-5.96-2.002-1.948-5.213-1.891-7.155.108L44.722 21.575c2.321 2.261 3.098 3.024 4.171 5.339zM10.041 66.626c-.118-8.864 3.219-17.24 9.396-23.584l18.559-19.064c.727-2.031.497-4.076-.076-5.319-.843-1.817-1.314-2.271-3.55-4.451L13.501 35.645C2.944 46.489 2.253 63.277 11.239 74.94c-.729-2.681-1.161-5.462-1.198-8.314z" />
@@ -198,29 +210,31 @@ const ClapIcon = ({ style: userStyles = {} }) => {
   );
 };
 
-const ClapCount = ({ style: userStyles = {} }) => {
+const ClapCount = ({ style: userStyles = {} }, className) => {
   const { count, setRef } = useContext(MediumClapContext);
+  const classNames = [styles.count, className].join(" ").trim();
 
   return (
     <span
       ref={setRef}
       data-refkey="clapCountRef"
-      className={styles.count}
+      className={classNames}
       style={userStyles}
     >
       + {count}
     </span>
   );
 };
-
-const CountTotal = ({ style: userStyles = {} }) => {
+ 
+const CountTotal = ({ style: userStyles = {} }, className) => {
   const { countTotal, setRef } = useContext(MediumClapContext);
+  const classNames = [styles.total, className].join(" ").trim();
 
   return (
     <span
       ref={setRef}
       data-refkey="clapTotalRef"
-      className={styles.total}
+      className={classNames}
       style={userStyles}
     >
       {countTotal}
@@ -255,14 +269,17 @@ const Usage = () => {
   const handleClap = (clapState) => {
     setCount(clapState.count);
   };
+  
   return (
     <div style={{ width: "100%" }}>
-      <MediumClap onClap={handleClap} style={{ border: "1px solid red" }}>
-        <MediumClap.Icon />
-        <MediumClap.Count style={{  background: "#8cacea"}}/>
-        <MediumClap.Total style={{ background: "#8cacea", color:'black' }}/>
+      <MediumClap onClap={handleClap} className={userCustomStyles.clap}>
+        <MediumClap.Icon className={userCustomStyles.icon} />
+        <MediumClap.Count className={userCustomStyles.count} />
+        <MediumClap.Total className={userCustomStyles.total} />
       </MediumClap>
-      <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      {!!count && (
+        <div className={styles.info}>{`You have clapped ${count} times`}</div>
+      )}
     </div>
   );
 };

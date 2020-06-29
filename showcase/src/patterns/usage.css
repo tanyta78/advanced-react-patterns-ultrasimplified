@@ -2,6 +2,7 @@
 
 .total {
     color: #896EAF;
+    background: red;
 }
 
  /* count */ 
@@ -15,6 +16,12 @@
 }
 .clap:hover {
     border: 1px solid #896EAF; 
+}
+
+/* icon*/
+.icon {
+    border: 1px solid red; 
+    
 }
 
 .cupContainer {
